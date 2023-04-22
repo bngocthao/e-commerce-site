@@ -2,6 +2,7 @@
   <nav>
     <NavBar/>
   </nav>
+  
   <router-view/>
 </template>
 
@@ -16,11 +17,11 @@ import NavBar from "@/components/NavBar.vue";
    font-family: Arial;
  }
 
- #page-wrap {
-   margin: auto;
-   max-width: 800px;
-   min-height: 100vh;
- }
+ /*#page-wrap {*/
+ /*  margin: auto;*/
+ /*  max-width: 800px;*/
+ /*  min-height: 100vh;*/
+ /*}*/
 
  button {
    background-color: black;
