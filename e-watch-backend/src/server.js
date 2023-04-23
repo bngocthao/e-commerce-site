@@ -1,10 +1,11 @@
 import express from 'express'
 import bodyParser from 'body-parser'
+const mongoose = require('mongoose')
 // use mongodb connection
 import {ServerApiVersion} from "mongodb";
 import { MongoClient } from 'mongodb';
 // const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://b1812378:fR2Lydbw@cluster0.ofhpjzs.mongodb.net/?retryWrites=true&w=majority";
+// const uri = "mongodb+srv://b1812378:fR2Lydbw@cluster0.ofhpjzs.mongodb.net/?retryWrites=true&w=majority";
 
 // const user = {id: '12345', cartItems: ['123', '234', '456']}
 
@@ -108,13 +109,13 @@ app.use(bodyParser.json())
 app.get('/api/products', async (req, res) => {
     // connect to database
     const client = await MongoClient.connect(
-    'mongodb://localhost:27017',
+    'mongodb://127.0.0.1:27017/',
     {useNewUrlParser:true, useUnifiedTopology: true}
     )
     const db = client.db('wdb')
 
     //query get products
-    const products = await db.collection('Products').find({}).toArray()
+    const products = await db.collection('products').find({}).toArray()
     res.status(200).json(products)
 
     //close db?
@@ -224,31 +225,18 @@ app.listen(8000, () =>{
     console.log('server is listen on port 8000')
 })
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
-    }
-});
-
-async function run() {
+const connectDB = async () => {
     try {
-        // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
-        // Send a ping to confirm a successful connection
-        await client.db("admin").command({ping: 1});
-        await console.log("Pinged your deployment. You successfully connected to MongoDB!");
-
-    }catch (e){
-        console.error(e)
-    } finally {
-        // Ensures that the client will close when you finish/error
-        await client.close();
+        const conn = await mongoose.connect(`mongodb://127.0.0.1:27017/wdb`, {
+            useNewUrlParser: true,
+        });
+        console.log(`MongoDB Connected: {conn.connection.host}`);
+    } catch (error) {
+        console.error(error.message);
+        process.exit(1);
     }
 }
-run().catch(console.dir);
+connectDB();
 
 async function createListing(client, newListing){
     const result = await client.db("wdb").collection("Products")
