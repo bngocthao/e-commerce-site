@@ -6,7 +6,11 @@
       <h3>{{product.name}}</h3>
       <p>${{ product.price }}</p>
     </div>
-    <button class="remove-button">Remove From Cart</button>
+<!--    // khi ấn vào remove hàm emit sẽ làm cái btn hiện lên, gọi hàm remove from cart và truyền tham số cho nó-->
+    <button
+        class="remove-button"
+        v-on:click="$emit('remove-from-cart', product.id)"
+    >Remove From Cart</button>
   </div>
 </template>
 
@@ -18,13 +22,14 @@ export default {
 
 </script>
 
-<style scopedyyy>
+<style scoped>
 .product-container {
   align-content: center;
   border-bottom: 1px solid #ddd;
   display: flex;
   padding: 16px;
   width: 100%;
+
 }
 
 .product-image {

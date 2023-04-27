@@ -20,7 +20,9 @@ export default {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  margin-top: 16px;
+  margin-top: 50px;
+  margin-left: 200px;
+  margin-right: 200px;
 }
 
 

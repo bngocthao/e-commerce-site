@@ -17,16 +17,11 @@ export default {
       products: [],
     }
   },
-  async setup() {
-    const result = await axios.get('http://localhost:8000/api/products')
+  async created() {
+    const result = await axios.get('/api/products')
     const products = result.data
     this.products = products
   },
-  // mounted() {
-  //   axios.get('http://localhost:8000/api/products')
-  //        .then(response => this.products = response.data)
-  // }
-
 }
 </script>
 
