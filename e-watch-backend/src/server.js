@@ -10,37 +10,40 @@ import {ServerApiVersion} from "mongodb";
 import { MongoClient } from 'mongodb';
 // const { MongoClient, ServerApiVersion } = require('mongodb');
 // const uri = "mongodb+srv://b1812378:fR2Lydbw@cluster0.ofhpjzs.mongodb.net/?retryWrites=true&w=majority";
-
+const authJwt = require('../helpers/jwt')
+const errorHandler = require('../helpers/error-handler')
 //middleware
 app.use(express.json())
 app.use(morgan('tiny'))
+app.use(authJwt())
+app.use((err, req, res, next) => {
+  if (err.name === 'UnauthorizedError') {
+    // jwt authentication error
+    return res.status(401).json({message: "The user is not authorized"})
+  }
+
+  if (err.name === 'ValidationError') {
+    //  validation error
+    return res.status(401).json({message: err})
+  }
+
+  // default to 500 server error
+  return res.status(500).json(err)})
 
 //routes
 const categoriesRoutes = require('../routers/categories')
 const productsRoutes = require('../routers/products')
+const usersRoutes = require('../routers/users')
+const ordersRoutes = require('../routers/orders')
 
 //use route
 app.use('/api/categories', categoriesRoutes)
 app.use('/api/products', productsRoutes)
+app.use('/api/users', usersRoutes)
+app.use('/api/orders', ordersRoutes)
 
-//dùng để load ảnh
-// app.use('/images', express.static(path.join(__dirname, '../assets')))
 
-// app.get('/api/products', async (req, res) => {
-//   // connect to database
-//   const client = await MongoClient.connect(
-//       'mongodb://127.0.0.1:27017/',
-//       {useNewUrlParser:true, useUnifiedTopology: true}
-//   )
-//   const db = client.db('wdb')
-//
-//   //query get products
-//   const products = await db.collection('products').find({}).toArray()
-//   res.status(200).json(products)
-//
-//   //close db?
-//   client.close()
-// })
+
 
 app.listen(3000, () =>{
   console.log('server is listen on port 3000')
@@ -59,16 +62,3 @@ const connectDB = async () => {
 }
 connectDB();
 
-async function createListing(client, newListing){
-  const result = await client.db("wdb").collection("products")
-      .insertMany(newListing)
-
-  console.log(`New listing with the following id: ${result.insertedId}`);
-}
-
-async function createOneUser(client, newListing){
-  const result = await client.db("wdb").collection("users")
-      .insertOne(newListing)
-
-  console.log(`New User with the following id: ${result.insertedId} created`);
-}
